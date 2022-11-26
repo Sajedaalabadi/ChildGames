@@ -1,0 +1,306 @@
+﻿<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="utf-8" />
+    <title>Easy Level Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- CSS only -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
+      crossorigin="anonymous"
+    />
+    <!--css-->
+    <link rel="stylesheet" type="text/css" href="StyleSheet1.css" />
+  </head>
+
+  <body>
+    <p>-</p>
+    <div id="container">
+      <!-- title-->
+      <div style="text-align: center">
+        <h1 class="gametitle">Easy Level Game</h1>
+        <p style="font-weight: bold">User Name: <span id="user-name"></span></p>
+        <p style="font-weight: bold">Age: <span id="age"></span></p>
+      </div>
+
+      <div id="win-img"></div>
+      <div id="fireworks-img"></div>
+      <div id="lose-img"></div>
+
+      <!--game board-->
+      <div id="board">
+        <div id="total-questions">
+          Q:
+          <span id="current-q"></span> /
+          <span id="total-q"></span>
+        </div>
+        <div id="right">Right</div>
+        <div id="wrong">Try again</div>
+        <div id="score">Score: <span id="scoreNumber">0</span></div>
+        <div id="problem"></div>
+        <div id="instruction"></div>
+        <div id="answers">
+          <div id="answer1" class="noselect"></div>
+          <div id="answer2" class="noselect"></div>
+          <div id="answer3" class="noselect"></div>
+          <div id="answer4" class="noselect"></div>
+        </div>
+        <div id="start">Start Game</div>
+
+        <!-- <div id="time">Time: <span id="remainingTime">55</span> sec</div> -->
+        <div id="gameover">
+          GAME OVER Your score:
+          <span id="finalscore">0</span>
+        </div>
+      </div>
+
+      <!--audio files-->
+      <div class="player" style="display: none">
+        <audio id="startgame" autoplay controls loop>
+          <source src="./audio/start.mp3" />
+        </audio>
+      </div>
+      <div style="display: none">
+        <audio id="playing" controls loop>
+          <source src="./audio/playing.mp3" />
+        </audio>
+      </div>
+      <audio id="lost">
+        <source src="./audio/صوت فشل للمونتاج (192 kbps).mp3" />
+      </audio>
+      <audio id="win">
+        <source src="./audio/m1.mp3" />
+      </audio>
+      <audio id="final">
+        <source src="./audio/GAME OVER Voice Sound Effect (320 kbps).mp3" />
+      </audio>
+    </div>
+
+    <!--JavaScript-->
+    <!-- <script src="javascript.js"></script> -->
+    <script>
+      var playing = false;
+      var score;
+      var timeRemaining;
+      var action;
+      var correctAnswer;
+      var generalIteration = 0;
+      const totalQuestions = 5;
+      const minimumSuccessScore = 7;
+
+      var url = new URL(window.location.href);
+      var userName = url.searchParams.get('uname');
+      var age = url.searchParams.get('Age');
+
+      document.getElementById('user-name').innerHTML = userName;
+      document.getElementById('age').innerHTML = age;
+
+      document.getElementById('total-q').innerHTML = totalQuestions;
+      document.getElementById('current-q').innerHTML = 0;
+
+      //the user clicks on the start/reset
+      document.getElementById('start').onclick = function () {
+        //if the user is playing
+        if (playing == true) {
+          //reload page
+          location.reload();
+        }
+        //if the user is not playing
+        else {
+          //change mode to playing
+          document.getElementById('startgame').pause();
+          document.getElementById('playing').play();
+          playing = true;
+          score = 0;
+          document.getElementById('scoreNumber').innerHTML = score;
+
+          //show the instructions
+          document.getElementById('instruction').innerHTML = 'Click on the right answer';
+
+          //show countdown box
+          // show('time');
+
+          //30 seconds timer
+          // timeRemaining = 30;
+          // document.getElementById('remainingTime').innerHTML = timeRemaining;
+
+          //hide game over box
+          hide('gameover');
+
+          //change button to reset
+          // document.getElementById('start').innerHTML = 'Reset Game';
+          // document.getElementById('start').style.display = 'none';
+          hide('start');
+
+          //start countdown
+          // startCountdown();
+
+          //generate new question and answers
+          generateQA();
+        }
+      };
+
+      //the user clicks on the answer box
+      for (var i = 1; i < 5; i++) {
+        document.getElementById('answer' + i).onclick = function () {
+          if (playing == true) {
+            if (generalIteration < totalQuestions) {
+              //if the answer is correct
+              //this=document.getElementById("answer1")
+              if (this.innerHTML == correctAnswer) {
+                //correct answer
+                score = score + 2;
+                document.getElementById('scoreNumber').innerHTML = score;
+
+                show('right');
+
+                //show for 1 sec
+                setTimeout(function () {
+                  hide('right');
+                }, 1000);
+                hide('wrong');
+                //generate new answer and question
+                generateQA();
+              } else {
+                //play sound
+
+                //wrong answer
+                show('wrong');
+
+                //show for 1 sec
+                setTimeout(function () {
+                  hide('wrong');
+                }, 1000);
+                hide('right');
+
+                //generate new answer and question
+                generateQA();
+              }
+            }
+
+            generalIteration++;
+          }
+
+          if (generalIteration === totalQuestions) {
+            playing = false;
+            document.getElementById('playing').pause();
+            show('gameover', 'flex');
+
+            let title = '';
+
+            if (score >= minimumSuccessScore) {
+              document.getElementById('win').play();
+              document.getElementById('win-img').classList.add('open');
+              document.getElementById('fireworks-img').classList.add('open');
+              title = 'You Won The Game';
+            } else {
+              document.getElementById('lost').play();
+              document.getElementById('lose-img').classList.add('open');
+              title = 'GameOver';
+            }
+
+            document.getElementById('gameover').innerHTML = `
+              <p>${title}</p>
+              <p>Score: ' ${score} '</p>
+            `;
+          }
+        };
+      }
+
+      //functions
+
+      //start countdown 20sec
+      function startCountdown() {
+        action = setInterval(function () {
+          timeRemaining -= 1;
+          document.getElementById('remainingTime').innerHTML = timeRemaining;
+          if (timeRemaining == 0 && playing === true) {
+            //game over
+            stopCountdown();
+            show('gameover', 'flex');
+            document.getElementById('gameover').innerHTML = '<p>GAME OVER!</p><p>YOUR SCORE: ' + score + '</p>';
+            document.getElementById('final');
+            // hide('time');
+            hide('right');
+            hide('wrong');
+            playing = false;
+            document.getElementById('start').innerHTML = 'Start Game';
+          }
+        }, 1000);
+      }
+
+      //generate question and answers
+      function generateQA() {
+        //a random digit from 0 to 10 inclusive
+        var randomNumber1 = Math.round(Math.random() * 10);
+        var randomNumber2 = Math.round(Math.random() * 10);
+        var randomNumber3 = Math.round(Math.random() * 10);
+
+        // for select a rondom mathematical calculations
+        var mathematicalCalculations = ['+', '-'];
+        var randomNum1 = Math.floor(Math.random() * mathematicalCalculations.length);
+
+        do {
+          var randomNum2 = Math.floor(Math.random() * mathematicalCalculations.length);
+        } while (randomNum1 === randomNum2);
+
+        var selectMath1 = mathematicalCalculations[randomNum1];
+        var selectMath2 = mathematicalCalculations[randomNum2];
+
+        const currentQuestion = `${randomNumber1} ${selectMath1} ${randomNumber2} ${selectMath2} ${randomNumber3}`;
+        correctAnswer = Number(eval(currentQuestion).toFixed(1));
+
+        if (correctAnswer == 'Infinity') {
+          return generateQA();
+        }
+
+        document.getElementById('current-q').innerHTML = +document.getElementById('current-q').innerHTML + 1;
+
+        document.getElementById('problem').innerHTML = currentQuestion;
+
+        // correctAnswer = questions[rondomNum];
+        var answerBox = Math.round(Math.random() * 3) + 1;
+
+        //to fill on if the random answer boxes with the right answer
+        document.getElementById('answer' + answerBox).innerHTML = correctAnswer;
+
+        //storing answer choices;
+        var answers = [correctAnswer];
+
+        //to fill the other answer boxes with the wrong answers
+
+        //make sure to exclude the box with the right answer
+        for (var i = 1; i < 5; i++) {
+          if (i !== answerBox) {
+            var wrongAnswer;
+            // check that the wrong answer is not equal to the right answer or another taken wrong answer
+            //do: at least one possible answer, while: generate then a new possible answer, if the previous answer is not ok
+            do {
+              wrongAnswer = Math.round(Math.random() * 10) + Math.round(Math.random() * 10);
+            } while (answers.indexOf(wrongAnswer) > -1); //wrongAnswer is already in the answer list, we countinue do loop
+
+            document.getElementById('answer' + i).innerHTML = Number(wrongAnswer.toFixed(1));
+            //adding wrong answer to answer choices
+            answers.push(wrongAnswer);
+          }
+        }
+      }
+
+      //stop counter
+      function stopCountdown() {
+        clearInterval(action);
+      }
+      //hide an element
+      function hide(id) {
+        document.getElementById(id).style.display = 'none';
+      }
+      //show an element
+      function show(id, display = 'block') {
+        document.getElementById(id).style.display = display;
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="utf-8" />
+    <title>Base Level Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- bootstrap cdn-->
+    <!-- CSS only -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU"
+      crossorigin="anonymous"
+    />
+    <!--css-->
+    <link rel="stylesheet" type="text/css" href="StyleSheet1.css" />
+
+    <style>
+      #gameover {
+        opacity: 1 !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div>-</div>
+    <div id="container">
+      <!-- title-->
+      <div style="text-align: center">
+        <h1 class="gametitle">Base Level Game</h1>
+        <p style="font-weight: bold">User Name: <span id="user-name"></span></p>
+        <p style="font-weight: bold">Age: <span id="age"></span></p>
+      </div>
+
+      <!--game board-->
+      <div id="board">
+        <div id="right">Right</div>
+        <div id="wrong">False</div>
+        <div id="score">Score: <span id="scoreNumber">0</span></div>
+        <div id="problem"></div>
+        <div id="instruction"></div>
+        <div id="answers">
+          <div id="answer1"></div>
+          <div id="answer2"></div>
+          <div id="answer3"></div>
+          <div id="answer4"></div>
+        </div>
+        <div id="start">Start Game</div>
+
+        <div id="gameover">GAME OVER Your score: <span id="finalscore">0</span></div>
+      </div>
+
+      <!--audio files-->
+      <div class="player" style="display: none">
+        <audio id="startgame" autoplay controls loop>
+          <source src="./audio/start.mp3" />
+        </audio>
+      </div>
+      <div style="display: none">
+        <audio id="playing" controls loop>
+          <source src="./audio/playing.mp3" />
+        </audio>
+      </div>
+      <audio id="lost">
+        <source src="./audio/صوت فشل للمونتاج (192 kbps).mp3" />
+      </audio>
+      <audio id="win">
+        <source src="./audio/m1.mp3" />
+      </audio>
+      <audio id="final">
+        <source src="./audio/GAME OVER Voice Sound Effect (320 kbps).mp3" />
+      </audio>
+    </div>
+
+    <!--JavaScript-->
+    <script src="./javascript.js"></script>
+  </body>
+</html>
